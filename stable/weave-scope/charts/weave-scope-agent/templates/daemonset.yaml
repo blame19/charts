@@ -32,9 +32,6 @@ spec:
         - name: {{ template "weave-scope-agent.name" . }}
           image: "{{ .Values.global.image.repository }}:{{ .Values.global.image.tag }}"
           imagePullPolicy: "{{ .Values.global.image.pullPolicy }}"
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
           args:
             - '--mode=probe'
             - '--probe-only'
@@ -57,6 +54,8 @@ spec:
             {{- end }}
           securityContext:
             privileged: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
           resources:
 {{ toYaml .Values.resources | indent 12 }}
           volumeMounts:
