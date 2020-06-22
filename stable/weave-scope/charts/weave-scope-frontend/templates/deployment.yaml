@@ -25,6 +25,18 @@ spec:
         - name: {{ template "weave-scope-frontend.name" . }}
           image: "{{ .Values.global.image.repository }}:{{ .Values.global.image.tag }}"
           imagePullPolicy: "{{ .Values.global.image.pullPolicy }}"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 4040
+            initialDelaySeconds: 30
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 4040
+            initialDelaySeconds: 30
+            periodSeconds: 3
           args:
             - "--no-probe"
             {{- range $arg := .Values.flags }}
