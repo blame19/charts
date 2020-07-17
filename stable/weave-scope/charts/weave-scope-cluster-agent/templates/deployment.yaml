@@ -26,9 +26,6 @@ spec:
         - name: {{ template "weave-scope-cluster-agent.name" . }}
           image: "{{ .Values.global.image.repository }}:{{ .Values.global.image.tag }}"
           imagePullPolicy: "{{ .Values.global.image.pullPolicy }}"
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
           args:
             - '--mode=probe'
             - '--probe-only'
@@ -43,6 +40,14 @@ spec:
             - {{ .Values.global.scopeFrontendAddr }}
             {{- else }}
             - {{ .Values.global.service.name | default (include "toplevel.fullname" .) }}.{{ .Release.Namespace }}.svc:{{ .Values.global.service.port }}
+            {{- end }}
+          securityContext:
+            privileged: true
+            {{- if .Values.securityContext.runAsNonRoot }}
+            runAsNonRoot: true
+            {{- end }}
+            {{- if .Values.securityContext.readOnlyRootFilesystem}}
+            readOnlyRootFilesystem: true
             {{- end }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
